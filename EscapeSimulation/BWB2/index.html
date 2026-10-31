@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Before We Blink - Oceanic Abyss Simulation</title>
+  
+  <!-- Modern Geometric Rounded Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+  
+  <!-- p5.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
+</head>
+<body>
+
+  <!-- Simulation Main Canvas Container -->
+  <main id="canvas-container">
+
+    <!-- Top Telemetry & HUD Overlay -->
+    <header id="hud-overlay">
+      <div class="hud-row">
+        <!-- Escape Progress Bar Card -->
+        <div class="pill-card flex-1">
+          <div class="card-header">
+            <span class="card-title">TARDIS Escape Progress</span>
+            <span class="card-counter" id="hud-tokens-text">0 / 12 TOKENS</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="hud-tokens-fill"></div>
+          </div>
+        </div>
+
+        <!-- Quantum Lock Status Card -->
+        <div class="pill-card status-card">
+          <div class="card-header">
+            <span class="card-title">Quantum Lock Status</span>
+            <span class="card-counter status-lime" id="hud-angels-locked">0 LOCKED</span>
+          </div>
+          <div class="status-subtext" id="hud-tl-summary">
+            Time Lords Standing: 4 / 4
+          </div>
+        </div>
+      </div>
+
+      <!-- V1 Vitality & Carry State Roster -->
+      <div class="pill-card">
+        <div class="card-header">
+          <span class="card-title">Time Lord Vitality (3 Time Energy HP)</span>
+        </div>
+        <div class="tl-vitality-list" id="tl-vitality-container"></div>
+      </div>
+    </header>
+
+    <!-- Contextual Control Instructions Hint -->
+    <aside class="controls-hint" id="controls-hint">
+      Manual Mode: [W, A, S, D] to Move | Cursor to Aim Vision Cone
+    </aside>
+
+    <!-- 1. SCENARIO INTRO MODAL DIALOG ON STARTUP -->
+    <div id="intro-modal" class="modal-backdrop">
+      <div class="scenario-modal-card">
+        <span class="modal-tag">Mission Briefing</span>
+        <h1>BEFORE WE BLINK</h1>
+        <p class="scenario-desc">
+          A space-time pocket collapse has stranded your squad in an oceanic abyss surrounded by quantum-locked Weeping Angels. Your sightlines are the only barrier keeping reality tethered.
+        </p>
+
+        <div class="briefing-box">
+          <div class="briefing-item">
+            <div class="briefing-bullet">1</div>
+            <div>
+              <b>Venture &amp; Retrieve:</b> Venture away from the stepping-stone TARDIS Sanctuary to gather 12 floating Firefly Tokens and deposit them into the central Console.
+            </div>
+          </div>
+
+          <div class="briefing-item">
+            <div class="briefing-bullet">2</div>
+            <div>
+              <b>The Gaze Paradox:</b> Unencumbered Time Lords freeze Angels caught in their Field of View (FOV). However, <b>carrying a token blinds your FOV</b> (eyes focused on the glowing payload). Allies must watch your blind spots!
+            </div>
+          </div>
+
+          <div class="briefing-item">
+            <div class="briefing-bullet">3</div>
+            <div>
+              <b>Survival:</b> Each Time Lord begins with 3 Time Energy (HP). An unobserved Angel touch steals 1 HP and locks that Angel for 10 seconds.
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-action-primary" id="btn-start-mission">ENTER THE RIFT</button>
+      </div>
+    </div>
+
+    <!-- 2. GAME OVER / VICTORY MODAL -->
+    <div id="endgame-modal" class="modal-backdrop hidden">
+      <div class="scenario-modal-card endgame-card">
+        <span class="modal-tag" id="endgame-badge">Debrief</span>
+        <h1 id="endgame-title">TIME LORDS ESCAPED!</h1>
+        <p class="scenario-desc" id="endgame-desc">
+          All firefly tokens have been returned to the TARDIS console. The crew dematerializes out of the abyss.
+        </p>
+        <button class="btn-action-primary" id="btn-replay">REPLAY SIMULATION</button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Sidebar Configuration Control Panel (Plan A) -->
+  <aside id="sidebar-panel">
+    <header class="sidebar-header">
+      <h2>Adjustable Conditions <span class="plan-pill">Plan A</span></h2>
+    </header>
+
+    <div class="sidebar-scroll">
+      <!-- Player Manual Steering Toggle -->
+      <label class="switch-row" for="chk-player-mode">
+        <div>
+          <div class="switch-title">Control Doctor (TL #1)</div>
+          <div class="switch-sub">WASD Movement + Mouse Vision Cone</div>
+        </div>
+        <input type="checkbox" id="chk-player-mode">
+      </label>
+
+      <!-- Faction Counts -->
+      <div class="control-item">
+        <div class="control-label-row">
+          <span class="control-title">Time Lords (TL)</span>
+          <span class="control-val" id="val-tl-count">4</span>
+        </div>
+        <input type="range" id="slider-tl-count" min="2" max="10" step="1" value="4">
+      </div>
+
+      <div class="control-item">
+        <div class="control-label-row">
+          <span class="control-title">Weeping Angels (WA)</span>
+          <span class="control-val" id="val-wa-count">4</span>
+        </div>
+        <input type="range" id="slider-wa-count" min="2" max="10" step="1" value="4">
+      </div>
+
+      <div class="control-item">
+        <div class="control-label-row">
+          <span class="control-title">Tokens Required</span>
+          <span class="control-val" id="val-tokens">12</span>
+        </div>
+        <input type="range" id="slider-tokens" min="4" max="24" step="2" value="12">
+      </div>
+
+      <hr class="sidebar-divider">
+
+      <!-- Speed & Spatial Perception -->
+      <div class="control-item">
+        <div class="control-label-row">
+          <span class="control-title">Time Lord Speed</span>
+          <span class="control-val" id="val-tl-speed">2.4</span>
+        </div>
+        <input type="range" id="slider-tl-speed" min="1.0" max="4.5" step="0.1" value="2.4">
+      </div>
+
+      <div class="control-item">
+        <div class="control-label-row">
+          <span class="control-title">Weeping Angel Speed</span>
+          <span class="control-val" id="val-wa-speed">3.4</span>
+        </div>
+        <input type="range" id="slider-wa-speed" min="1.0" max="5.5" step="0.1" value="3.4">
+      </div>
+
+      <div class="control-item">
+        <div class="control-label-row">
+          <span class="control-title">Vision Cone Angle</span>
+          <span class="control-val" id="val-fov-angle">75°</span>
+        </div>
+        <input type="range" id="slider-fov-angle" min="30" max="120" step="5" value="75">
+      </div>
+
+      <div class="control-item">
+        <div class="control-label-row">
+          <span class="control-title">Vision Cone Distance</span>
+          <span class="control-val" id="val-fov-dist">280px</span>
+        </div>
+        <input type="range" id="slider-fov-dist" min="150" max="420" step="10" value="280">
+      </div>
+
+      <div class="control-item">
+        <div class="control-label-row">
+          <span class="control-title">TARDIS Sanctuary Radius</span>
+          <span class="control-val" id="val-safe-radius">165px</span>
+        </div>
+        <input type="range" id="slider-safe-radius" min="110" max="240" step="5" value="165">
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="button-group">
+        <button class="btn btn-cyan" id="btn-restart">Restart</button>
+        <button class="btn btn-ghost" id="btn-pause">Pause</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- p5.js Simulation Logic -->
+  <script src="sketch.js"></script>
+</body>
+</html>

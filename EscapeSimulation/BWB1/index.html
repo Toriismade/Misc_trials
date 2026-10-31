@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Before We Blink - Asymmetric Simulation Prototype</title>
+  <!-- Load p5.js via CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
+  <!-- Link external stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Main Canvas Area -->
+  <div id="canvas-container">
+    <div id="hud-overlay">
+      <!-- Escape Progress HUD -->
+      <div class="hud-card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div class="hud-title">Escape Progress (TARDIS Console)</div>
+          <div id="escape-count" style="font-family: monospace; font-size: 13px; font-weight:700; color:var(--cyan);">0 / 12</div>
+        </div>
+        <div class="progress-bar-container">
+          <div id="escape-fill" class="progress-bar-fill"></div>
+        </div>
+      </div>
+
+      <!-- Spoils Progress HUD -->
+      <div class="hud-card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div class="hud-title">Time Lord Vitality (Spoils Progress)</div>
+          <div id="tl-alive-count" style="font-family: monospace; font-size: 13px; font-weight:700; color:var(--gold);">Active: 4/4</div>
+        </div>
+        <div id="tl-roster-display" class="tl-roster"></div>
+      </div>
+    </div>
+
+    <!-- Victory/Defeat Banner -->
+    <div id="banner-modal">
+      <h1 id="banner-title">TIME LORDS ESCAPED</h1>
+      <p id="banner-desc">All temporal tokens restored to the TARDIS Console.</p>
+      <button class="btn btn-primary" onclick="window.sim.resetGame()">Replay Simulation</button>
+    </div>
+  </div>
+
+  <!-- Real-time Adjustable Parameter HUD (Plan A) -->
+  <div id="sidebar">
+    <div class="sidebar-header">
+      <h2>BEFORE WE BLINK <span>PLAN A</span></h2>
+    </div>
+
+    <div class="sidebar-content">
+      <!-- Player Control Toggle -->
+      <label class="switch-container">
+        <span style="font-size:12px; font-weight:600;">Manual Control (TL #1)</span>
+        <input type="checkbox" id="chk-player-mode">
+      </label>
+      <div style="font-size:10px; color:var(--text-muted); margin-top:-10px;">
+        Use <b>[W,A,S,D]</b> to move & <b>Mouse</b> to rotate field of view.
+      </div>
+
+      <!-- Factions Count -->
+      <div class="control-group">
+        <div class="control-label">
+          <span>Time Lords (TL)</span>
+          <span class="val" id="val-tl">4</span>
+        </div>
+        <input type="range" id="slider-tl" min="2" max="10" step="1" value="4">
+      </div>
+
+      <div class="control-group">
+        <div class="control-label">
+          <span>Weeping Angels (WA)</span>
+          <span class="val" id="val-wa">4</span>
+        </div>
+        <input type="range" id="slider-wa" min="2" max="10" step="1" value="4">
+      </div>
+
+      <div class="control-group">
+        <div class="control-label">
+          <span>Required Tokens</span>
+          <span class="val" id="val-tokens">12</span>
+        </div>
+        <input type="range" id="slider-tokens" min="4" max="24" step="2" value="12">
+      </div>
+
+      <hr style="border:0; border-top:1px solid rgba(255,255,255,0.08);">
+
+      <!-- Speeds & Mechanics -->
+      <div class="control-group">
+        <div class="control-label">
+          <span>Time Lord Speed</span>
+          <span class="val" id="val-tlspeed">2.3</span>
+        </div>
+        <input type="range" id="slider-tlspeed" min="1.0" max="4.5" step="0.1" value="2.3">
+      </div>
+
+      <div class="control-group">
+        <div class="control-label">
+          <span>Weeping Angel Speed</span>
+          <span class="val" id="val-waspeed">3.2</span>
+        </div>
+        <input type="range" id="slider-waspeed" min="1.0" max="5.0" step="0.1" value="3.2">
+      </div>
+
+      <div class="control-group">
+        <div class="control-label">
+          <span>Vision Cone Angle</span>
+          <span class="val" id="val-fov">75°</span>
+        </div>
+        <input type="range" id="slider-fov" min="30" max="120" step="5" value="75">
+      </div>
+
+      <div class="control-group">
+        <div class="control-label">
+          <span>Vision Distance</span>
+          <span class="val" id="val-fovdist">280px</span>
+        </div>
+        <input type="range" id="slider-fovdist" min="150" max="450" step="10" value="280">
+      </div>
+
+      <div class="control-group">
+        <div class="control-label">
+          <span>TARDIS Safe Radius</span>
+          <span class="val" id="val-saferad">160px</span>
+        </div>
+        <input type="range" id="slider-saferad" min="100" max="260" step="10" value="160">
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="button-stack">
+        <button class="btn btn-primary" id="btn-restart">Restart Match</button>
+        <button class="btn btn-secondary" id="btn-pause">Pause</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load Simulation Script -->
+  <script src="sketch.js"></script>
+</body>
+</html>

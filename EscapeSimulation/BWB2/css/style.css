@@ -1,0 +1,578 @@
+/* ==========================================================================
+   OCEANIC ABYSS & NEON-CHARTREUSE PALETTE (Sampled from Reference Image)
+   ========================================================================== */
+:root {
+  /* Oceanic Abyss Gradient */
+  --ocean-deep: #092055;
+  --ocean-abyss: #0c43a4;
+  --ocean-marine: #0c54c4;
+  --ocean-bright: #1060de;
+
+  /* Time Lords (Electric Sky Cyan / Aqua) */
+  --tl-cyan: #38d8ff;
+  --tl-aqua: #5ce1e6;
+  --tl-white: #ffffff;
+  --tl-ink: #102040;
+
+  /* Stepping Stones / Console Surface (Neon Chartreuse & Pale Marble) */
+  --neon-lime: #d2ff17;
+  --neon-lime-dark: #baf200;
+  --stone-plinth: #e8eef8;
+  --stone-slate: #ced8ea;
+  --stone-dark: #9aaec7;
+
+  /* Weeping Angels (Shadowed Indigo Rock) */
+  --wa-rock: #161a42;
+  --wa-rock-highlight: #2d3a7a;
+  --wa-locked-stone: #202652;
+
+  /* Time Energy Tokens (Warm Butter Gold / Amber Firefly) */
+  --token-gold: #ffdf50;
+  --token-amber: #ffc926;
+  --token-glow: rgba(255, 223, 80, 0.45);
+
+  /* HUD & Floating UI Cards (Translucent Slate Navy with Lime/Cyan Accents) */
+  --ui-bg: rgba(14, 38, 92, 0.88);
+  --ui-card: rgba(18, 48, 114, 0.95);
+  --ui-card-sub: rgba(10, 28, 70, 0.75);
+  --ui-border: rgba(210, 255, 23, 0.28);
+  --ui-border-glow: rgba(56, 216, 255, 0.35);
+  --text-white: #f5f9ff;
+  --text-muted: #95b2df;
+  --shadow-deep: 0 16px 36px rgba(4, 14, 38, 0.55);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body {
+  background-color: var(--ocean-deep);
+  color: var(--text-white);
+  font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+}
+
+/* ==========================================================================
+   CANVAS MOUNTING CONTAINER
+   ========================================================================== */
+#canvas-container {
+  flex: 1;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 45%, var(--ocean-marine) 0%, var(--ocean-deep) 100%);
+}
+
+#canvas-container canvas {
+  display: block;
+}
+
+/* ==========================================================================
+   SCENARIO INTRO MODAL & ENDGAME DIALOGS
+   ========================================================================== */
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 16, 44, 0.72);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.35s;
+}
+
+.modal-backdrop.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.scenario-modal-card {
+  background: var(--ui-bg);
+  border: 3px solid var(--neon-lime);
+  border-radius: 28px;
+  padding: 38px 44px;
+  max-width: 580px;
+  width: 90%;
+  box-shadow: 0 24px 60px rgba(0, 8, 26, 0.7), 0 0 30px rgba(210, 255, 23, 0.2);
+  text-align: left;
+  transform: scale(1);
+  transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-backdrop.hidden .scenario-modal-card {
+  transform: scale(0.92);
+}
+
+.endgame-card {
+  text-align: center;
+  max-width: 480px;
+}
+
+.modal-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  background: var(--neon-lime);
+  color: var(--tl-ink);
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+}
+
+.scenario-modal-card h1 {
+  font-size: 30px;
+  font-weight: 900;
+  color: var(--tl-cyan);
+  letter-spacing: -0.5px;
+  margin-bottom: 10px;
+  line-height: 1.1;
+  text-shadow: 0 0 16px rgba(56, 216, 255, 0.4);
+}
+
+.scenario-desc {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-muted);
+  margin-bottom: 22px;
+  font-weight: 600;
+}
+
+.briefing-box {
+  background: var(--ui-card-sub);
+  border: 1.5px dashed var(--ui-border);
+  border-radius: 18px;
+  padding: 16px 20px;
+  margin-bottom: 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.briefing-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 13px;
+  line-height: 1.45;
+  font-weight: 700;
+  color: var(--text-white);
+}
+
+.briefing-bullet {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--neon-lime);
+  color: var(--tl-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 900;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.briefing-item b {
+  color: var(--neon-lime);
+}
+
+.btn-action-primary {
+  width: 100%;
+  padding: 15px;
+  border-radius: 30px;
+  background: var(--tl-cyan);
+  color: var(--tl-ink);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(56, 216, 255, 0.35);
+  transition: all 0.2s ease;
+}
+
+.btn-action-primary:hover {
+  background: #68e2ff;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(56, 216, 255, 0.5);
+}
+
+/* ==========================================================================
+   TOP TELEMETRY & HUD OVERLAY
+   ========================================================================== */
+#hud-overlay {
+  position: absolute;
+  top: 18px;
+  left: 20px;
+  right: 390px;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 20;
+}
+
+.hud-row {
+  display: flex;
+  gap: 14px;
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+
+.pill-card {
+  background: var(--ui-bg);
+  border: 2px solid var(--ui-border);
+  border-radius: 22px;
+  padding: 12px 20px;
+  box-shadow: var(--shadow-deep);
+  backdrop-filter: blur(12px);
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.pill-card.flex-1 {
+  flex: 1;
+  min-width: 240px;
+}
+
+.status-card {
+  min-width: 220px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-title {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--neon-lime);
+}
+
+.card-counter {
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--text-white);
+  letter-spacing: 0.5px;
+}
+
+.status-lime {
+  color: var(--neon-lime);
+}
+
+.status-subtext {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-muted);
+}
+
+.progress-track {
+  background: rgba(8, 22, 58, 0.6);
+  border-radius: 30px;
+  height: 14px;
+  overflow: hidden;
+  padding: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--tl-cyan), var(--neon-lime));
+  border-radius: 30px;
+  width: 0%;
+  transition: width 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 0 10px rgba(210, 255, 23, 0.4);
+}
+
+/* V1 Time Lord HP & Carry Roster */
+.tl-vitality-list {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tl-badge {
+  background: var(--ui-card-sub);
+  border: 1.5px solid rgba(56, 216, 255, 0.25);
+  border-radius: 14px;
+  padding: 5px 11px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-white);
+}
+
+.tl-badge.carrying {
+  border-color: var(--token-gold);
+  background: rgba(255, 223, 80, 0.12);
+}
+
+.tl-badge.dead {
+  opacity: 0.35;
+  text-decoration: line-through;
+  border-color: rgba(255, 80, 80, 0.4);
+}
+
+.carrying-chip {
+  font-size: 9px;
+  font-weight: 900;
+  background: var(--token-gold);
+  color: var(--tl-ink);
+  padding: 1px 6px;
+  border-radius: 8px;
+  letter-spacing: 0.5px;
+}
+
+.hp-dots {
+  display: flex;
+  gap: 4px;
+}
+
+.hp-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--tl-cyan);
+  box-shadow: 0 0 6px var(--tl-cyan);
+}
+
+.hp-dot.spent {
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: none;
+}
+
+/* ==========================================================================
+   SIDEBAR CONFIGURATION PANEL (Plan A)
+   ========================================================================== */
+#sidebar-panel {
+  width: 370px;
+  height: 100%;
+  background: var(--ui-bg);
+  border-left: 2px solid var(--ui-border);
+  box-shadow: -10px 0 35px rgba(0, 10, 30, 0.6);
+  backdrop-filter: blur(14px);
+  display: flex;
+  flex-direction: column;
+  z-index: 30;
+}
+
+.sidebar-header {
+  padding: 22px 24px;
+  border-bottom: 2px solid rgba(210, 255, 23, 0.15);
+}
+
+.sidebar-header h2 {
+  font-size: 19px;
+  font-weight: 900;
+  color: var(--text-white);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sidebar-header .plan-pill {
+  font-size: 11px;
+  font-weight: 900;
+  padding: 3px 9px;
+  border-radius: 20px;
+  background: var(--neon-lime);
+  color: var(--tl-ink);
+  text-transform: uppercase;
+}
+
+.sidebar-scroll {
+  padding: 20px 24px;
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sidebar-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: rgba(56, 216, 255, 0.3);
+  border-radius: 10px;
+}
+
+/* Switch Row */
+.switch-row {
+  background: var(--ui-card-sub);
+  border: 1.5px solid var(--ui-border-glow);
+  border-radius: 16px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.switch-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-white);
+}
+
+.switch-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--neon-lime);
+  cursor: pointer;
+}
+
+/* Control Item Sliders */
+.control-item {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.control-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.control-title {
+  font-size: 11px;
+  font-weight: 900;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.control-val {
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--neon-lime);
+  background: var(--ui-card-sub);
+  padding: 2px 7px;
+  border-radius: 6px;
+  border: 1px solid rgba(210, 255, 23, 0.2);
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 7px;
+  background: rgba(6, 18, 50, 0.8);
+  border-radius: 10px;
+  outline: none;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--neon-lime);
+  border: 2px solid var(--tl-ink);
+  box-shadow: 0 0 10px rgba(210, 255, 23, 0.6);
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+.sidebar-divider {
+  border: 0;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Buttons */
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.btn {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 25px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.btn-cyan {
+  background: var(--tl-cyan);
+  color: var(--tl-ink);
+  box-shadow: 0 4px 14px rgba(56, 216, 255, 0.3);
+}
+
+.btn-cyan:hover {
+  background: #62e1ff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(56, 216, 255, 0.45);
+}
+
+.btn-ghost {
+  background: var(--ui-card-sub);
+  color: var(--text-white);
+  border: 1.5px solid var(--ui-border);
+}
+
+.btn-ghost:hover {
+  background: rgba(18, 48, 114, 0.9);
+  transform: translateY(-2px);
+}
+
+.controls-hint {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background: var(--ui-bg);
+  border: 2px solid var(--ui-border);
+  border-radius: 24px;
+  padding: 9px 18px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--neon-lime);
+  pointer-events: none;
+  z-index: 20;
+  box-shadow: var(--shadow-deep);
+}
