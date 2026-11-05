@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Before We Blink</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+  <!-- p5.js 2.x: if your generated index.html already had a p5 script line, use that line here instead. -->
+  <script src="https://cdn.jsdelivr.net/npm/p5@2.0.5/lib/p5.min.js"></script>
+</head>
+<body>
+<nav class="menubar" aria-label="Simulation controls">
+  <span class="brand">Before We Blink</span>
+  <button class="menu" id="resetBtn" type="button">Reset</button>
+  <button class="menu" id="pauseBtn" type="button">Pause</button>
+  <button class="menu" id="storyBtn" type="button">Story</button>
+</nav>
+
+<div class="app">
+  <main class="main">
+    <section class="win" aria-label="Round status">
+      <div class="win-title"><span>Status</span></div>
+      <div class="win-body">
+        <div class="hud">
+          <div>
+            <span class="label">Storm reaches TARDIS</span>
+            <span id="clock" role="timer">3:00</span>
+          </div>
+          <div>
+            <span class="label">Escape progress</span>
+            <span id="escapeText">[............] 0/12</span>
+          </div>
+          <div class="hud-energy">
+            <span class="label">Time energy left</span>
+            <div id="energy"></div>
+          </div>
+        </div>
+        <div id="status" aria-live="off"></div>
+      </div>
+    </section>
+    <section class="win">
+      <div class="win-title"><span>Field</span></div>
+      <div class="field-body">
+        <div class="stage" id="stage">
+          <div class="overlay" id="endOverlay" hidden>
+            <div class="alert" role="alertdialog" aria-labelledby="endTitle">
+              <span class="sprite" id="endIcon" aria-hidden="true"></span>
+              <div>
+                <h2 id="endTitle"></h2>
+                <p id="endText"></p>
+              </div>
+              <div class="row"><button class="btn primary" id="againBtn" type="button">Run again</button></div>
+            </div>
+          </div>
+          <div class="overlay" id="pauseOverlay" hidden>
+            <div class="alert">
+              <span class="sprite" id="pauseIcon" aria-hidden="true"></span>
+              <div><h2>Paused</h2><p>The storm has stopped for now.</p></div>
+              <div class="row"><button class="btn primary" id="unpauseBtn" type="button">Resume</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <aside class="side">
+    <section class="win" aria-label="Adjustable conditions">
+      <div class="win-title"><span>Conditions</span></div>
+      <div class="win-body">
+        <div class="sliders" id="sliders"></div>
+        <p id="dirty" aria-live="polite"></p>
+      </div>
+    </section>
+    <section class="win" aria-label="Key to the field">
+      <div class="win-title"><span>On the field</span></div>
+      <div class="win-body"><div class="key" id="key"></div></div>
+    </section>
+  </aside>
+</div>
+
+<dialog id="intro" aria-labelledby="introTitle">
+  <div class="win-title"><span>Read me</span></div>
+  <div class="dlg">
+    <h1 id="introTitle">Before We Blink</h1>
+    <p>A Time Storm has trapped the Time Lords and the Weeping Angels in the same small pocket of time. Both sides want one thing: time energy.</p>
+    <p>The Time Lords need Zeiton Crystals to charge the TARDIS and escape. The Angels want to feed on the time energy inside every Time Lord.</p>
+    <p class="storm-line">The storm reaches the TARDIS in <span id="dlgStorm">3:00</span>. If the Time Lords have not escaped by then, the Angels win.</p>
+    <div class="choices">
+      <section class="choice">
+        <div class="choice-head"><span class="sprite" id="introTL" aria-hidden="true"></span><h3>Time Lords</h3></div>
+        <ul>
+          <li>Carry every crystal to the console.</li>
+          <li>Angels in their view cannot move.</li>
+          <li>Carrying a crystal switches the view off. It cannot be put down.</li>
+          <li>Each starts with 3 energy and can give it to a Time Lord it touches. At 0 it is out.</li>
+        </ul>
+      </section>
+      <section class="choice">
+        <div class="choice-head"><span class="sprite" id="introWA" aria-hidden="true"></span><h3>Weeping Angels</h3></div>
+        <ul>
+          <li>Drain every Time Lord, or outlast the storm.</li>
+          <li>They only move while no one is looking at them.</li>
+          <li>Each touch takes 1 energy.</li>
+          <li>After feeding, that Angel freezes for 10 seconds.</li>
+        </ul>
+      </section>
+    </div>
+    <p>Both teams run on their own. Set the conditions in the panel and watch how they change the result.</p>
+    <div class="row dlg-actions">
+      <button class="btn" id="resumeBtn" type="button" hidden>Back to the simulation</button>
+      <button class="btn primary" id="startBtn" type="button">Start simulation</button>
+    </div>
+  </div>
+</dialog>
+
+<script src="sketch.js"></script>
+</body>
+</html>
